@@ -24,6 +24,10 @@
         "prettier"
     ],
     "rules": {
+        "react/prop-types": "off",
+        "react/require-default-props": "off",
+        "react/jsx-props-no-spreading": "off",
+        "@typescript-eslint/no-explicit-any": "off",
         "import/no-duplicates": "off",
         "react/react-in-jsx-scope": "off",
         "camelcase": "off",
