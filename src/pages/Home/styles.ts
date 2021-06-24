@@ -96,8 +96,16 @@ export const CreateRoomButton = styled.button`
   }
 
   transition: filter 0.2s, border-color 0.2s;
-  &:hover {
+
+  &:not(:disabled):hover {
     filter: brightness(0.8);
+    border: none;
+    color: var(--black);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;
 

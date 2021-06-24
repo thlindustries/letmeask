@@ -1,5 +1,4 @@
-import { ReactElement, useState } from 'react';
-import { ButtonHTMLAttributes } from 'react';
+import { ReactElement, useState, ButtonHTMLAttributes } from 'react';
 
 import { Container } from './styles';
 

@@ -10,7 +10,6 @@ export const Container = styled.button<ContainerProps>`
   justify-content: center;
   align-items: center;
 
-  margin-top: 4rem;
   height: 3.125rem;
   border-radius: 0.5rem;
   font-weight: 500;

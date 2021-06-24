@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
 } from 'react';
+import { toast } from 'react-toastify';
 import { firebase, auth } from 'services/firebase';
 
 interface User {
@@ -59,7 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): any => {
       setUser({ ...theUser });
     } else {
       // eslint-disable-next-line no-alert
-      alert('Authentication failed');
+      toast.error('Authentication failed');
     }
   }, []);
 

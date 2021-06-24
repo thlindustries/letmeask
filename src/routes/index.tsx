@@ -5,6 +5,7 @@ import Home from 'pages/Home';
 
 // Private pages
 import NewRoom from 'pages/NewRoom';
+import Room from 'pages/Room';
 
 // import Route from './Route';
 
@@ -14,6 +15,7 @@ const Routes: React.FC = () => {
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/room/new" component={NewRoom} exact />
+        <Route path="/room/:id" component={Room} exact />
       </Switch>
     </>
   );
