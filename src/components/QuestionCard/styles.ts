@@ -1,4 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+interface RoleActionButtonProps {
+  isLiked?: boolean;
+}
 
 export const Container = styled.div`
   position: relative;
@@ -10,41 +14,91 @@ export const Container = styled.div`
 
   min-height: 8.75rem;
 
-  background: var(--white);
+  background: var(--white-grayed-100);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+
   margin-bottom: 1rem;
 
-  .user-info {
+  p {
+    color: var(--gray-600);
+  }
+
+  footer {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     margin-top: auto;
 
-    img {
-      width: 2rem;
-      height: 2rem;
+    .user-info {
+      display: flex;
+      align-items: center;
 
-      border-radius: 50%;
-    }
+      img {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+      }
 
-    p {
-      margin-left: 0.5rem;
+      span {
+        margin-left: 0.5rem;
+        color: var(--gray-400);
+        font-size: 0.875rem;
+      }
     }
   }
 
-  .like-container {
+  .actions-container {
     position: absolute;
     bottom: 24px;
     right: 24px;
 
     display: flex;
     align-items: center;
+  }
 
-    p {
-      margin-right: 0.5rem;
+  transition: box-shadow 0.2s;
+  &:hover {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
+`;
 
-      color: var(--gray-400);
+export const RoleActionButton = styled.button<RoleActionButtonProps>`
+  border: 0;
+  background: transparent;
 
-      font-family: 'Poppins', sans-serif;
-      font-size: 1rem;
-    }
+  transition: color 0.2s, filter 0.2s;
+
+  &.like-button {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+    color: var(--gray-400);
+  }
+
+  svg path {
+    transition: fill 0.2s, stroke 0.2s;
+  }
+
+  ${(props) =>
+    props.isLiked &&
+    css`
+      color: var(--purple);
+      svg path {
+        fill: var(--purple);
+        stroke: var(--white);
+      }
+    `}
+
+  span {
+    margin-right: 0.5rem;
+
+    color: var(--gray-400);
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+  }
+
+  &:hover {
+    filter: brightness(0.2);
   }
 `;

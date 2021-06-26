@@ -46,6 +46,11 @@ const Home = (): any => {
         return;
       }
 
+      if (roomRef.val().closedAt) {
+        toast.warning('Room already closed :(');
+        return;
+      }
+
       push(`/room/${roomCode}`);
     },
     [roomCode, push],

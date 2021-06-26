@@ -6,37 +6,25 @@ import { Header } from 'components/Header';
 import { QuestionCard } from 'components/QuestionCard';
 
 import { useAuth } from 'hooks/auth';
+import { useRoom } from 'hooks/room';
 import { toast } from 'react-toastify';
-import { database } from 'services/firebase';
 import { Loading } from 'components/Loading';
 
+import { database } from 'services/firebase';
 import { Container, MainContent, QuestionContainer } from './styles';
-
-type Question = {
-  id: string;
-  content: string;
-  author: {
-    name: string;
-    avatar: string;
-  };
-  isAnswered: boolean;
-  isHighlighted: boolean;
-};
-
-type FirebaseQuestions = Record<string, Question>;
 
 interface Params {
   id: string;
 }
 
-const Room = (): any => {
+export const Room = (): any => {
   const [newQuestionContent, setNewQuestionContent] = useState('');
-  const [title, setTitle] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [questions, setQuestions] = useState<Question[]>([]);
 
   const params = useParams<Params>();
+
   const { user } = useAuth();
+  const { isLoading, questions, title, handleSetRoomId, sendQuestion } =
+    useRoom();
 
   const handleSendQuestion = useCallback(
     async (e: FormEvent) => {
@@ -56,96 +44,101 @@ const Room = (): any => {
         },
         isHighlighted: false,
         isAnswered: false,
+        likes: {},
+        likeId: '',
+        likeCount: 0,
       };
 
-      setIsLoading(true);
-      const response = await database
-        .ref(`rooms/${params.id}/questions`)
-        .push(question);
-      setIsLoading(false);
+      await sendQuestion(question);
 
-      if (response) {
-        setNewQuestionContent('');
-        toast.success('Your question has been sent');
+      setNewQuestionContent('');
+    },
+    [newQuestionContent, user, sendQuestion],
+  );
+
+  const handleLikeQuestion = useCallback(
+    async (questionId: string, likeId: string | undefined) => {
+      if (likeId) {
+        await database
+          .ref(`rooms/${params.id}/questions/${questionId}/likes/${likeId}`)
+          .remove();
+      } else {
+        await database
+          .ref(`rooms/${params.id}/questions/${questionId}/likes`)
+          .push({
+            authorId: user.id,
+          });
       }
     },
-    [newQuestionContent, user, params],
+    [params.id, user.id],
   );
 
   useEffect(() => {
-    const roomRef = database.ref(`rooms/${params.id}`);
-
-    roomRef.on('value', (room) => {
-      const databaseRoom = room.val();
-      const firebaseQuestions: FirebaseQuestions = databaseRoom.questions ?? {};
-
-      const parsedQuestions = Object.entries(firebaseQuestions).map(
-        ([key, value]) => ({
-          id: key,
-          content: value.content,
-          author: value.author,
-          isHighlighted: value.isHighlighted,
-          isAnswered: value.isAnswered,
-        }),
-      );
-
-      setTitle(databaseRoom.title);
-      setQuestions(parsedQuestions);
-    });
-  }, [params.id]);
+    handleSetRoomId(params.id);
+  }, [params.id, handleSetRoomId]);
 
   return (
     <Container>
       <Header roomCode={params.id} />
       <MainContent>
-        <div className="title">
-          <h1>{title}</h1>
-          {questions.length > 0 && (
-            <span>
-              {questions.length === 1
-                ? `${questions.length} pergunta`
-                : `${questions.length} perguntas`}
-            </span>
-          )}
-        </div>
-        <form onSubmit={handleSendQuestion}>
-          <textarea
-            placeholder="O que você quer perguntar?"
-            value={newQuestionContent}
-            onChange={(e) => setNewQuestionContent(e.target.value)}
-          />
-          <div className="form-footer">
-            {!user.name ? (
-              <span>
-                Para enviar uma pergunta,{' '}
-                <button type="button" disabled={isLoading}>
-                  faça seu login
-                </button>
-              </span>
-            ) : (
-              <div className="user-info">
-                <img src={user.avatar} alt={user.name} />
-                <span>{user.name}</span>
+        {title ? (
+          <>
+            <div className="title">
+              <h1>{title}</h1>
+              {questions.length > 0 && (
+                <span>
+                  {questions.length === 1
+                    ? `${questions.length} pergunta`
+                    : `${questions.length} perguntas`}
+                </span>
+              )}
+            </div>
+            <form onSubmit={handleSendQuestion}>
+              <textarea
+                placeholder="O que você quer perguntar?"
+                value={newQuestionContent}
+                onChange={(e) => setNewQuestionContent(e.target.value)}
+              />
+              <div className="form-footer">
+                {!user.name ? (
+                  <span>
+                    Para enviar uma pergunta,{' '}
+                    <button type="button" disabled={isLoading}>
+                      faça seu login
+                    </button>
+                  </span>
+                ) : (
+                  <div className="user-info">
+                    <img src={user.avatar} alt={user.name} />
+                    <span>{user.name}</span>
+                  </div>
+                )}
+                <Button
+                  className="send-button"
+                  type="submit"
+                  disabled={!user.name || isLoading}
+                >
+                  {isLoading ? <Loading /> : `Enviar pergunta`}
+                </Button>
               </div>
-            )}
-            <Button
-              className="send-button"
-              type="submit"
-              disabled={!user.name || isLoading}
-            >
-              {isLoading ? <Loading /> : `Enviar pergunta`}
-            </Button>
+            </form>
+            <QuestionContainer>
+              {questions &&
+                questions.map((item) => (
+                  <QuestionCard
+                    key={item.id}
+                    question={item}
+                    likeQuestion={handleLikeQuestion}
+                  />
+                ))}
+            </QuestionContainer>
+          </>
+        ) : (
+          <div className="loading-container">
+            <Loading />
           </div>
-        </form>
+        )}
       </MainContent>
-      <QuestionContainer>
-        {questions &&
-          questions.map((item) => (
-            <QuestionCard key={item.id} question={item} />
-          ))}
-      </QuestionContainer>
     </Container>
   );
 };
-
-export default Room;

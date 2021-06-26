@@ -11,7 +11,7 @@ import { Button } from 'components/Button';
 import { database } from 'services/firebase';
 import { Container, MainContent } from './styles';
 
-const NewRoom = (): ReactElement<any, any> | null => {
+export const NewRoom = (): ReactElement<any, any> | null => {
   const [roomName, setRoomName] = useState('');
 
   const { user } = useAuth();
@@ -62,5 +62,3 @@ const NewRoom = (): ReactElement<any, any> | null => {
     </Container>
   );
 };
-
-export default NewRoom;

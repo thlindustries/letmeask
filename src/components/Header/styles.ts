@@ -15,10 +15,21 @@ export const Container = styled.header`
     > img {
       max-height: 45px;
     }
-
-    transition: opacity 0.2s;
-    &:hover {
-      opacity: 0.8;
+    > a {
+      transition: opacity 0.2s;
+      &:hover {
+        opacity: 0.6;
+      }
     }
+  }
+`;
+
+export const AdminHeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  button {
+    height: 2.5rem;
   }
 `;

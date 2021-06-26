@@ -1,8 +1,10 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { rainbowBg } from 'styles/animations';
 
 interface ContainerProps {
   isHovered?: boolean;
+  isOutlined?: boolean;
+  customStyle?: string;
 }
 
 export const Container = styled.button<ContainerProps>`
@@ -32,7 +34,29 @@ export const Container = styled.button<ContainerProps>`
 
   padding: 0 2rem;
 
-  border: 2px solid transparent;
+  border: 1px solid transparent;
+
+  ${(props) =>
+    props.isOutlined &&
+    css`
+      border: 1px solid var(--purple);
+      background: var(--white);
+      color: var(--purple);
+    `}
+
+  ${(props) =>
+    props.customStyle === 'danger' &&
+    css`
+      background: #f15057;
+      color: #fff;
+    `}
+
+  ${(props) =>
+    props.customStyle === 'success' &&
+    css`
+      background: #04b530;
+      color: #fff;
+    `}
 
   img {
     margin-right: 0.5rem;
@@ -44,7 +68,6 @@ export const Container = styled.button<ContainerProps>`
 
   &:not(:disabled):hover {
     filter: brightness(0.8);
-    border: none;
     color: var(--black);
   }
 
