@@ -23,6 +23,8 @@ type QuestionCardProps = {
   question: Question;
   isAdmin?: boolean;
   deleteQuestion?(questionId: string): void;
+  highlightQuestion?(questionId: string): void;
+  checkQeustionAsAnswered?(questionId: string): void;
   likeQuestion?(questionId: string, likedId: string | undefined): void;
 };
 
@@ -30,6 +32,8 @@ export const QuestionCard = ({
   question,
   isAdmin = false,
   likeQuestion,
+  highlightQuestion,
+  checkQeustionAsAnswered,
   deleteQuestion,
 }: QuestionCardProps): any => {
   const { modalState, toggleModal } = useModal();
@@ -50,7 +54,10 @@ export const QuestionCard = ({
           closeModal={toggleDelteQuestionModal}
         />
       )}
-      <Container>
+      <Container
+        isAnswered={question.isAnswered}
+        isHighlighted={question.isHighlighted && !question.isAnswered}
+      >
         <p>{question.content}</p>
         <footer>
           <div className="user-info">
@@ -59,11 +66,21 @@ export const QuestionCard = ({
           </div>
           <div className="actions-container">
             {isAdmin
-              ? deleteQuestion && (
-                  <AdminActions deleteQuestion={toggleDelteQuestionModal} />
+              ? deleteQuestion &&
+                highlightQuestion &&
+                checkQeustionAsAnswered && (
+                  <AdminActions
+                    isAnswered={question.isAnswered}
+                    deleteQuestion={toggleDelteQuestionModal}
+                    highlightQuestion={() => highlightQuestion(question.id)}
+                    checkQeustionAsAnswered={() =>
+                      checkQeustionAsAnswered(question.id)
+                    }
+                  />
                 )
               : likeQuestion && (
                   <DefaultActions
+                    isAnswered={question.isAnswered}
                     isLiked={!!question.likeId}
                     likeCount={question.likeCount}
                     likeQuestion={() =>

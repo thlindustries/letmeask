@@ -3,7 +3,6 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import { useRoom } from 'hooks/room';
 import { useModal } from 'hooks/modal';
-import { database } from 'services/firebase';
 
 import { Loading } from 'components/Loading';
 import { Header } from 'components/Header';
@@ -21,7 +20,15 @@ export const AdminRoom = (): any => {
   const params = useParams<Params>();
   const { push } = useHistory();
 
-  const { questions, title, handleSetRoomId, endRoom } = useRoom();
+  const {
+    questions,
+    title,
+    handleSetRoomId,
+    endRoom,
+    deleteQuestion,
+    checkQuestionAsAnswered,
+    highlightQuestion,
+  } = useRoom();
   const { modalState, toggleModal } = useModal();
 
   const toggleEndRoomModal = (): void => {
@@ -37,9 +44,23 @@ export const AdminRoom = (): any => {
 
   const handleDeleteQuestion = useCallback(
     async (questionId: string) => {
-      await database.ref(`rooms/${params.id}/questions/${questionId}`).remove();
+      await deleteQuestion(params.id, questionId);
     },
-    [params.id],
+    [deleteQuestion, params.id],
+  );
+
+  const handleCheckQuestionAsAnswered = useCallback(
+    async (questionId: string) => {
+      await checkQuestionAsAnswered(params.id, questionId);
+    },
+    [checkQuestionAsAnswered, params.id],
+  );
+
+  const handleHighlightQuestion = useCallback(
+    async (questionId: string) => {
+      await highlightQuestion(params.id, questionId);
+    },
+    [highlightQuestion, params.id],
   );
 
   useEffect(() => {
@@ -78,6 +99,8 @@ export const AdminRoom = (): any => {
                       key={item.id}
                       question={item}
                       isAdmin
+                      highlightQuestion={handleHighlightQuestion}
+                      checkQeustionAsAnswered={handleCheckQuestionAsAnswered}
                       deleteQuestion={handleDeleteQuestion}
                     />
                   ))}

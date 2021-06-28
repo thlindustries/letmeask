@@ -40,6 +40,9 @@ interface RoomContextData {
   handleSetRoomId(id: string): void;
   sendQuestion(question: Omit<Question, 'id'>): Promise<void>;
   endRoom(roomId: string): Promise<void>;
+  deleteQuestion(theRoomId: string, questionId: string): Promise<void>;
+  checkQuestionAsAnswered(theRoomId: string, questionId: string): Promise<void>;
+  highlightQuestion(theRoomId: string, questionId: string): Promise<void>;
 }
 
 type FirebaseQuestions = Record<string, Question>;
@@ -87,6 +90,37 @@ export const RoomProvider = ({ children }: RoomProviderProps): any => {
     });
   }, []);
 
+  const deleteQuestion = useCallback(
+    async (theRoomId: string, questionId: string) => {
+      setIsLoading(true);
+      await database.ref(`rooms/${theRoomId}/questions/${questionId}`).remove();
+      setIsLoading(false);
+    },
+    [],
+  );
+
+  const checkQuestionAsAnswered = useCallback(
+    async (theRoomId: string, questionId: string) => {
+      setIsLoading(true);
+      await database.ref(`rooms/${theRoomId}/questions/${questionId}`).update({
+        isAnswered: true,
+      });
+      setIsLoading(false);
+    },
+    [],
+  );
+
+  const highlightQuestion = useCallback(
+    async (theRoomId: string, questionId: string) => {
+      setIsLoading(true);
+      await database.ref(`rooms/${theRoomId}/questions/${questionId}`).update({
+        isHighlighted: true,
+      });
+      setIsLoading(false);
+    },
+    [],
+  );
+
   useEffect(() => {
     const roomRef = database.ref(`rooms/${roomId}`);
 
@@ -127,6 +161,9 @@ export const RoomProvider = ({ children }: RoomProviderProps): any => {
         sendQuestion,
         handleSetRoomId,
         endRoom,
+        deleteQuestion,
+        highlightQuestion,
+        checkQuestionAsAnswered,
       }}
     >
       {children}

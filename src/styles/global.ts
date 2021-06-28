@@ -12,6 +12,7 @@ export default createGlobalStyle`
     --white: #fff;
     --white-grayed: #f8f8f8;
     --white-grayed-100: #fefefe;
+    --white-grayed-150: #f4f0ff;
     --white-grayed-200: #e2e2e2;
 
     --purple-light: #e559f9;
@@ -19,6 +20,7 @@ export default createGlobalStyle`
 
     --orange: #ea4335;
 
+    --gray-250: #dbdcdd;
     --gray-300: #a8a8b3;
     --gray-400: #737380;
     --gray-600: #29292e;

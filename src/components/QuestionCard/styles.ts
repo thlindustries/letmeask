@@ -4,7 +4,12 @@ interface RoleActionButtonProps {
   isLiked?: boolean;
 }
 
-export const Container = styled.div`
+interface ContainerProps {
+  isAnswered?: boolean;
+  isHighlighted?: boolean;
+}
+
+export const Container = styled.div<ContainerProps>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -49,14 +54,33 @@ export const Container = styled.div`
 
   .actions-container {
     position: absolute;
-    bottom: 24px;
-    right: 24px;
+    bottom: 1.5rem;
+    right: 1.5rem;
 
     display: flex;
     align-items: center;
+    gap: 1rem;
   }
 
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, background-color 0.2s, border 0.2s;
+
+  ${(props) =>
+    props.isHighlighted &&
+    css`
+      background: var(--white-grayed-150);
+      border: 1px solid var(--purple);
+
+      footer .user-info span {
+        color: var(--gray-600);
+      }
+    `}
+
+  ${(props) =>
+    props.isAnswered &&
+    css`
+      background: var(--gray-250);
+    `}
+
   &:hover {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   }
