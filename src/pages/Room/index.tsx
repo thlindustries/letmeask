@@ -22,7 +22,7 @@ export const Room = (): any => {
 
   const params = useParams<Params>();
 
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const { isLoading, questions, title, handleSetRoomId, sendQuestion } =
     useRoom();
 
@@ -73,6 +73,10 @@ export const Room = (): any => {
     [params.id, user.id],
   );
 
+  const handleRecoverLogin = useCallback(async () => {
+    await signInWithGoogle();
+  }, [signInWithGoogle]);
+
   useEffect(() => {
     handleSetRoomId(params.id);
   }, [params.id, handleSetRoomId]);
@@ -103,7 +107,11 @@ export const Room = (): any => {
                 {!user.name ? (
                   <span>
                     Para enviar uma pergunta,{' '}
-                    <button type="button" disabled={isLoading}>
+                    <button
+                      onClick={handleRecoverLogin}
+                      type="button"
+                      disabled={isLoading}
+                    >
                       faça seu login
                     </button>
                   </span>
